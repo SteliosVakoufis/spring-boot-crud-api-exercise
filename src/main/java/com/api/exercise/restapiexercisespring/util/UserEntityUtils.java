@@ -22,6 +22,7 @@ public class UserEntityUtils {
 
     public UserDTO entityToDTO(UserEntity entity){
         var result = new UserDTO();
+        result.setId(entity.getId());
         result.setEmail(entity.getEmail());
         result.setUsername(entity.getUsername());
         result.setFirstName(entity.getFirstName());

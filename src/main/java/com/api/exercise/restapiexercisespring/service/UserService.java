@@ -1,4 +1,4 @@
-package com.api.exercise.restapiexercisespring.services;
+package com.api.exercise.restapiexercisespring.service;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.api.exercise.restapiexercisespring.data.dtos.UserDTO;
 import com.api.exercise.restapiexercisespring.data.repositories.UserRepository;
+import com.api.exercise.restapiexercisespring.exception.UserNotFoundException;
 import com.api.exercise.restapiexercisespring.util.UserEntityUtils;
 
 @Service
@@ -23,9 +24,14 @@ public class UserService {
                 .allEntitiesToDTOs(userRepository.findAll());
     }
 
-    public UserDTO getUser(Long id) {
+    public UserDTO getUser(Long id) throws UserNotFoundException{
         var result = userRepository.findById(id);
-        return result.isPresent() ? userEntityUtils.entityToDTO(result.get()) : new UserDTO();
+
+        if (result.isPresent()){
+            return userEntityUtils.entityToDTO(result.get());
+        }
+        
+        throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
     public UserDTO addUser(UserDTO dto) {
@@ -34,7 +40,7 @@ public class UserService {
                         userEntityUtils.dtoToEntity(dto)));
     }
 
-    public UserDTO updateUser(Long id, UserDTO dto){
+    public UserDTO updateUser(Long id, UserDTO dto) throws UserNotFoundException{
         var user = userRepository.findById(id);
         if (user.isPresent()){
             user.get().setEmail(dto.getEmail());
@@ -47,7 +53,7 @@ public class UserService {
             );
         }
 
-        return new UserDTO();
+        throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
     public void deleteUser(Long id) {

@@ -1,4 +1,4 @@
-package com.api.exercise.restapiexercisespring.controllers;
+package com.api.exercise.restapiexercisespring.controller;
 
 import java.util.List;
 
@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.exercise.restapiexercisespring.data.dtos.UserDTO;
-import com.api.exercise.restapiexercisespring.services.UserService;
+import com.api.exercise.restapiexercisespring.exception.UserNotFoundException;
+import com.api.exercise.restapiexercisespring.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
@@ -28,30 +29,38 @@ public class WebApiController {
     @DeleteMapping(value = "/delete/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteUser(@PathVariable(name = "id", required = true) Long id){
-        this.userService.deleteUser(id);
+        userService.deleteUser(id);
     }
 
     @PutMapping(value = "/update/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public UserDTO updateUser(@PathVariable(name = "id", required = true) Long id, @RequestBody UserDTO dto){
-        return this.userService.updateUser(id, dto);
+        try {
+            return userService.updateUser(id, dto);
+        } catch (UserNotFoundException e) {
+            throw e;
+        }
     }
 
     @PostMapping(value = "/add")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public UserDTO addUser(@RequestBody UserDTO dto){
-        return this.userService.addUser(dto);
+        return userService.addUser(dto);
     }
 
     @GetMapping(value="/all")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public List<UserDTO> getAllUsers() {
-        return this.userService.getAllUsers();
+        return userService.getAllUsers();
     }
 
     @GetMapping(value="/{id}")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public UserDTO getUser(@PathVariable(name = "id") Long id) {
-        return this.userService.getUser(id);
+        try {
+            return userService.getUser(id);
+        } catch (UserNotFoundException e) {
+            throw e;
+        }
     }
 }
