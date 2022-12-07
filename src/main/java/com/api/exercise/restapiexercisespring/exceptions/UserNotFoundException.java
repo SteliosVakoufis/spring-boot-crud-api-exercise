@@ -1,4 +1,4 @@
-package com.api.exercise.restapiexercisespring.exception;
+package com.api.exercise.restapiexercisespring.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 

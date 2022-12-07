@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.api.exercise.restapiexercisespring.data.dtos.UserDTO;
 import com.api.exercise.restapiexercisespring.data.repositories.UserRepository;
-import com.api.exercise.restapiexercisespring.exception.UserNotFoundException;
+import com.api.exercise.restapiexercisespring.exceptions.UserAlreadyExistsException;
+import com.api.exercise.restapiexercisespring.exceptions.UserNotFoundException;
 import com.api.exercise.restapiexercisespring.util.UserEntityUtils;
 
 @Service
@@ -34,13 +35,18 @@ public class UserService {
         throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
-    public UserDTO addUser(UserDTO dto) {
-        return userEntityUtils.entityToDTO(
-                userRepository.save(
-                        userEntityUtils.dtoToEntity(dto)));
+    public UserDTO addUser(UserDTO dto) throws UserAlreadyExistsException{
+        try {
+            return userEntityUtils
+                .entityToDTO(userRepository
+                    .save(userEntityUtils
+                        .dtoToEntity(dto)));
+        } catch (Exception e) {
+            throw new UserAlreadyExistsException("User already exists with this information, Please try again.");
+        }
     }
 
-    public UserDTO updateUser(Long id, UserDTO dto) throws UserNotFoundException{
+    public UserDTO updateUser(Long id, UserDTO dto) throws UserNotFoundException, UserAlreadyExistsException{
         var user = userRepository.findById(id);
         if (user.isPresent()){
             user.get().setEmail(dto.getEmail());
@@ -48,15 +54,23 @@ public class UserService {
             user.get().setFirstName(dto.getFirstName());
             user.get().setLastName(dto.getLastName());
 
-            return userEntityUtils.entityToDTO(                
-                userRepository.save(user.get())
-            );
+            try {
+                return userEntityUtils.entityToDTO(                
+                    userRepository.save(user.get())
+                );
+            } catch (Exception e) {
+                throw new UserAlreadyExistsException("User already exists with this information, Please try again.");
+            }
         }
 
         throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(Long id) throws UserNotFoundException{
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new UserNotFoundException("The user you tried to delete does not exist, Please try again.");
+        }
     }
 }
