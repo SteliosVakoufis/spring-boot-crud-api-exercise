@@ -17,7 +17,7 @@ import com.api.exercise.restapiexercisespring.data.dtos.UserDTO;
 import com.api.exercise.restapiexercisespring.service.UserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class WebApiController {
     private final UserService userService;
 
@@ -27,8 +27,8 @@ public class WebApiController {
 
     /**
      * Returns a status code 200 if the user deletion is succesful.
-     * @param id used to find the user.
-     * @exception UserNotFoundException If user is not found.
+     * @param id    used to find the user.
+     * @exception UserNotFoundException     If user is not found.
      * @see {@link com.api.exercise.restapiexercisespring.exceptions.UserNotFoundException}
      */
     @DeleteMapping(value = "/delete/{id}")
