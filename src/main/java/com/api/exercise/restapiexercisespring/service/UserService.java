@@ -25,39 +25,43 @@ public class UserService {
                 .allEntitiesToDTOs(userRepository.findAll());
     }
 
-    public UserDTO getUser(Long id) throws UserNotFoundException{
+    public UserDTO getUser(Long id) throws UserNotFoundException {
         var result = userRepository.findById(id);
 
-        if (result.isPresent()){
+        if (result.isPresent()) {
             return userEntityUtils.entityToDTO(result.get());
         }
-        
+
         throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
-    public UserDTO addUser(UserDTO dto) throws UserAlreadyExistsException{
+    public UserDTO addUser(UserDTO dto) throws UserAlreadyExistsException {
         try {
             return userEntityUtils
-                .entityToDTO(userRepository
-                    .save(userEntityUtils
-                        .dtoToEntity(dto)));
+                    .entityToDTO(userRepository
+                            .save(userEntityUtils
+                                    .dtoToEntity(dto)));
         } catch (Exception e) {
             throw new UserAlreadyExistsException("User already exists with this information, Please try again.");
         }
     }
 
-    public UserDTO updateUser(Long id, UserDTO dto) throws UserNotFoundException, UserAlreadyExistsException{
+    public UserDTO updateUser(Long id, UserDTO dto) throws UserNotFoundException, UserAlreadyExistsException {
         var user = userRepository.findById(id);
-        if (user.isPresent()){
-            user.get().setEmail(dto.getEmail());
-            user.get().setUsername(dto.getUsername());
-            user.get().setFirstName(dto.getFirstName());
-            user.get().setLastName(dto.getLastName());
+        if (user.isPresent()) {
+
+            if (dto.getEmail() != null)
+                user.get().setEmail(dto.getEmail());
+            if (dto.getUsername() != null)
+                user.get().setUsername(dto.getUsername());
+            if (dto.getFirstName() != null)
+                user.get().setFirstName(dto.getFirstName());
+            if (dto.getLastName() != null)
+                user.get().setLastName(dto.getLastName());
 
             try {
-                return userEntityUtils.entityToDTO(                
-                    userRepository.save(user.get())
-                );
+                return userEntityUtils.entityToDTO(
+                        userRepository.save(user.get()));
             } catch (Exception e) {
                 throw new UserAlreadyExistsException("User already exists with this information, Please try again.");
             }
@@ -66,7 +70,7 @@ public class UserService {
         throw new UserNotFoundException("User with id (%d) not found, Please try again.".formatted(id));
     }
 
-    public void deleteUser(Long id) throws UserNotFoundException{
+    public void deleteUser(Long id) throws UserNotFoundException {
         try {
             userRepository.deleteById(id);
         } catch (Exception e) {
