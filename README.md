@@ -1,8 +1,9 @@
 # spring-boot-crud-api-exercise
-A WebApi exercise for Java with Spring boot
+WebApi exercise for Java with Spring boot
 
-A user can make api calls to interact with a mysql database. 
+In this exercise the user can make api calls to interact with a mysql database. 
 
-A repository is initialized to access a table inside our database which allows us to 
-have basic CRUD functionalities via api calls. 
+This is done by initializing a repository to access a table inside our database 
+which allows us to have basic CRUD functionalities via api calls. 
+
 Appropriate exceptions are thrown if any error occurs.
